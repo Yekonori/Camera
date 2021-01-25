@@ -2,17 +2,23 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CameraConfiguration : MonoBehaviour
+[System.Serializable]
+public class CameraConfiguration
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    [Range(0f, 360f)] public float yaw = 0f;
+    [Range(-90f, 90f)] public float pitch = 0f;
+    [Range(-180, 180)] public float roll = 0f;
+    public Vector3 pivot = Vector3.zero;
+    [Min(0f)] public float distance = 2f;
+    [Range(0f, 180f)] public float fieldOfView = 60f;
 
-    // Update is called once per frame
-    void Update()
+    public CameraConfiguration(float _yaw, float _pitch, float _roll, Vector3 _pivot, float _distance, float _fieldOfView)
     {
-        
+        yaw = _yaw;
+        pitch = _pitch;
+        roll = _roll;
+        pivot = _pivot;
+        distance = _distance;
+        fieldOfView = _fieldOfView;
     }
 }
