@@ -14,12 +14,12 @@ public class CameraController : MonoBehaviour
     private void Start()
     {
         myCam = Camera.main;
-        //StartCoroutine(ChangeConfig(startConfig, endConfig));
-        StartCoroutine(MoveConfig(listConfig));
+        List<CameraConfiguration> copie = new List<CameraConfiguration>(listConfig);
+        StartCoroutine(MoveConfig(copie));
     }
 
 
-    IEnumerator MoveConfig(/*float timer, */List<CameraConfiguration> lConfig)
+    IEnumerator MoveConfig(List<CameraConfiguration> lConfig)
     {
         if (lConfig.Count == 0)
         {
@@ -33,36 +33,24 @@ public class CameraController : MonoBehaviour
             transform.position = lConfig[0].pivot + offset;
             myCam.fieldOfView = lConfig[0].fieldOfView;
         }
-        else if (lConfig.Count == 2)
+        else
         {
             float timer = 0f;
             while (timer < movementDuration)
             {
                 timer += Time.deltaTime;
 
-                Quaternion startRot = Quaternion.Euler(lConfig[0].pitch, lConfig[0].yaw, lConfig[0].roll);
-                Quaternion endRot = Quaternion.Euler(lConfig[1].pitch, lConfig[1].yaw, lConfig[1].roll);
-                Quaternion orientation = Quaternion.Lerp(startRot, endRot, timer / movementDuration);
+                CameraConfiguration bla = CameraConfiguration.ListInterpolation(timer / movementDuration, lConfig);
+
+                Quaternion orientation = Quaternion.Euler(bla.pitch, bla.yaw, bla.roll);
                 myCam.transform.rotation = orientation;
 
-                Vector3 offsetStart = startRot * (Vector3.back * lConfig[0].distance);
-                Vector3 offsetEnd = endRot * (Vector3.back * lConfig[1].distance);
-                Vector3 offset = Vector3.Lerp(offsetStart, offsetEnd, timer / movementDuration);
-
-                myCam.transform.position = Vector3.Lerp(lConfig[0].pivot, lConfig[1].pivot, timer / movementDuration) + offset;
-                myCam.fieldOfView = Mathf.Lerp(lConfig[0].fieldOfView, lConfig[1].fieldOfView, timer / movementDuration);
+                Vector3 offset = orientation * Vector3.back * bla.distance;
+                myCam.transform.position = bla.pivot + offset;
+                myCam.fieldOfView = bla.fieldOfView;
 
                 yield return null;
             }
         }
     }
-
-    //void LerpConfig(float timer, List<CameraConfiguration> lConfig)
-    //{
-    //    if (lConfig.Count == 2)
-    //    {
-
-    //    }
-    //    else LerpConfig
-    //}
 }

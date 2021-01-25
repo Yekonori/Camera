@@ -21,4 +21,51 @@ public class CameraConfiguration
         distance = _distance;
         fieldOfView = _fieldOfView;
     }
+
+    public static CameraConfiguration Scalaire(float a, CameraConfiguration config)
+    {
+       float yaw = a * config.yaw;
+       float pitch = a * config.pitch;
+       float roll = a * config.roll;
+       Vector3 pivot = a * config.pivot;
+       float distance = a * config.distance;
+       float fieldOfView = a * config.fieldOfView;
+
+        CameraConfiguration toReturn = new CameraConfiguration(yaw, pitch, roll, pivot, distance, fieldOfView);
+        return toReturn;
+    }
+
+    public static CameraConfiguration SumConfig(CameraConfiguration A, CameraConfiguration B)
+    {
+        float yaw = A.yaw + B.yaw;
+        float pitch = A.pitch + B.pitch;
+        float roll = A.roll + B.roll;
+        Vector3 pivot = A.pivot + B.pivot;
+        float distance = A.distance + B.distance;
+        float fieldOfView = A.fieldOfView + B.fieldOfView;
+
+        CameraConfiguration toReturn = new CameraConfiguration(yaw, pitch, roll, pivot, distance, fieldOfView);
+        return toReturn;
+    }
+
+    public static CameraConfiguration Interpolation(float t, CameraConfiguration A, CameraConfiguration B)
+    {
+        return SumConfig(Scalaire(1 - t, A), Scalaire(t, B));
+    }
+
+    public static CameraConfiguration ListInterpolation(float t, List<CameraConfiguration> list)
+    {
+        if (list.Count == 2)
+        {
+            return Interpolation(t, list[0], list[1]);
+        }
+        else
+        {
+            List<CameraConfiguration> list2 = new List<CameraConfiguration>(list);
+            //list2 = list;
+            list.RemoveAt(list.Count - 1);
+            list2.RemoveAt(0);
+            return SumConfig(Scalaire(1 - t, ListInterpolation(t, list)), Scalaire(t, ListInterpolation(t, list2)));  
+        }
+    }
 }
