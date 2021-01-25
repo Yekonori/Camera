@@ -61,11 +61,11 @@ public class CameraConfiguration
         }
         else
         {
+            List<CameraConfiguration> list1 = new List<CameraConfiguration>(list);
             List<CameraConfiguration> list2 = new List<CameraConfiguration>(list);
-            //list2 = list;
-            list.RemoveAt(list.Count - 1);
+            list1.RemoveAt(list.Count - 1);
             list2.RemoveAt(0);
-            return SumConfig(Scalaire(1 - t, ListInterpolation(t, list)), Scalaire(t, ListInterpolation(t, list2)));  
+            return SumConfig(Scalaire(1 - t, ListInterpolation(t, list1)), Scalaire(t, ListInterpolation(t, list2)));  
         }
     }
 }

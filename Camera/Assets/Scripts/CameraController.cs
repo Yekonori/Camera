@@ -14,8 +14,7 @@ public class CameraController : MonoBehaviour
     private void Start()
     {
         myCam = Camera.main;
-        List<CameraConfiguration> copie = new List<CameraConfiguration>(listConfig);
-        StartCoroutine(MoveConfig(copie));
+        StartCoroutine(MoveConfig(listConfig));
     }
 
 
