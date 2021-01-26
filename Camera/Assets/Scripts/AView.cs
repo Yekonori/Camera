@@ -10,7 +10,7 @@ public abstract class AView : MonoBehaviour
 
     protected void Start()
     {
-        SetActive(isActiveOnStart);
+        Init();
     }
 
     void SetActive(bool isActive)
@@ -29,5 +29,10 @@ public abstract class AView : MonoBehaviour
         {
             test.DrawGizmos(Color.white);
         }
+    }
+
+    protected void Init()
+    {
+        SetActive(isActiveOnStart);
     }
 }
