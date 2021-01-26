@@ -11,6 +11,19 @@ public class CameraController : MonoBehaviour
     //CameraConfiguration startConfig;
     //CameraConfiguration endConfig;
 
+    public static CameraController Instance;
+    private void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(this);
+        }
+    }
+
     private void Start()
     {
         myCam = Camera.main;
