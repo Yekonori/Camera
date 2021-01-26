@@ -107,6 +107,15 @@ public class CameraController : MonoBehaviour
         if (sumWeight == 0)
         {
             Debug.LogError("Met des poids à tes vues");
+            foreach (AView view in activeViews)
+            {
+                yaw += view.GetConfiguration().yaw;
+                pitch += view.GetConfiguration().pitch;
+                roll += view.GetConfiguration().roll;
+                pivot += view.GetConfiguration().pivot;
+                distance += view.GetConfiguration().distance;
+                fieldOfView += view.GetConfiguration().fieldOfView;
+            }
             float nbView = activeViews.Count;
             return new CameraConfiguration(yaw/ nbView, pitch / nbView, roll / nbView, pivot / nbView, distance / nbView, fieldOfView/ nbView);
         }
