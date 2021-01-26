@@ -4,11 +4,11 @@ using UnityEngine;
 
 public abstract class AView : MonoBehaviour
 {
-    public float weight;
+    [Min(0f)] public float weight;
     public bool isActiveOnStart = false;
     public abstract CameraConfiguration GetConfiguration();
 
-    private void Start()
+    protected void Start()
     {
         SetActive(isActiveOnStart);
     }
@@ -25,7 +25,7 @@ public abstract class AView : MonoBehaviour
     public void OnDrawGizmos()
     {
         CameraConfiguration test = GetConfiguration();
-        if (test != null)
+        if (test != null && isActiveOnStart)
         {
             test.DrawGizmos(Color.white);
         }

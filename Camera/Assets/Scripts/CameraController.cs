@@ -33,25 +33,25 @@ public class CameraController : MonoBehaviour
 
     private void Update()
     {
-        CameraConfiguration interpol = InterpolateFixedView(activeViews);
-        CameraConfiguration current = GetCurrentConfig();
+        targetConfig = InterpolateView(activeViews);
+        currentConfig = GetCurrentConfig();
 
-        Quaternion orientation = Quaternion.Euler(interpol.pitch, interpol.yaw, interpol.roll);
-        Vector3 offset = orientation * (Vector3.back * interpol.distance);
+        Quaternion orientation = Quaternion.Euler(targetConfig.pitch, targetConfig.yaw, targetConfig.roll);
+        Vector3 offset = orientation * (Vector3.back * targetConfig.distance);
 
         float s = speed * Time.deltaTime;
 
         if (s < 1f)
         {
-            myCam.transform.rotation = Quaternion.Lerp(current.GetRotation(), interpol.GetRotation(), s);            
-            myCam.transform.position = Vector3.Lerp(current.GetPosition(), interpol.GetPosition(), s);
-            myCam.fieldOfView = Mathf.Lerp(current.fieldOfView, interpol.fieldOfView, s);
+            myCam.transform.rotation = Quaternion.Lerp(currentConfig.GetRotation(), targetConfig.GetRotation(), s);            
+            myCam.transform.position = Vector3.Lerp(currentConfig.GetPosition(), targetConfig.GetPosition(), s);
+            myCam.fieldOfView = Mathf.Lerp(currentConfig.fieldOfView, targetConfig.fieldOfView, s);
         }
         else
         {
             myCam.transform.rotation = orientation;
-            myCam.transform.position = interpol.pivot + offset;
-            myCam.fieldOfView = interpol.fieldOfView;
+            myCam.transform.position = targetConfig.pivot + offset;
+            myCam.fieldOfView = targetConfig.fieldOfView;
         }
     }
 
@@ -76,14 +76,13 @@ public class CameraController : MonoBehaviour
 
         return new CameraConfiguration(yaw, pitch, roll, pivot, distance, fieldOfView);
     }
-    CameraConfiguration InterpolateFixedView(List<AView> activeViews)
+    CameraConfiguration InterpolateView(List<AView> activeViews)
     {
         if (activeViews.Count == 0)
         {
             Debug.LogError("Ajoute des vues !");
             return new CameraConfiguration(0f, 0f, 0f, Vector3.zero, 5f, 60f);
         }
-
 
         float yaw = 0f;
         float pitch = 0f;
