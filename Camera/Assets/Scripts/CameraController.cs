@@ -8,8 +8,7 @@ public class CameraController : MonoBehaviour
     public List<CameraConfiguration> listConfig;
     private Camera myCam;
 
-    //CameraConfiguration startConfig;
-    //CameraConfiguration endConfig;
+    private List<AView> activeViews = new List<AView>();
 
     public static CameraController Instance;
     private void Awake()
@@ -27,9 +26,19 @@ public class CameraController : MonoBehaviour
     private void Start()
     {
         myCam = Camera.main;
-        StartCoroutine(MoveConfig(listConfig));
+        //StartCoroutine(MoveConfig(listConfig));
     }
 
+    private void Update()
+    {
+        CameraConfiguration interpol = InterpolateFixedView(activeViews);
+
+        Quaternion orientation = Quaternion.Euler(interpol.pitch, interpol.yaw, interpol.roll);
+        myCam.transform.rotation = orientation;
+        Vector3 offset = orientation * (Vector3.back * interpol.distance);
+        myCam.transform.position = interpol.pivot + offset;
+        myCam.fieldOfView = interpol.fieldOfView;
+    }
 
     IEnumerator MoveConfig(List<CameraConfiguration> lConfig)
     {
@@ -64,5 +73,60 @@ public class CameraController : MonoBehaviour
                 yield return null;
             }
         }
+    }
+
+    public void AddView(AView view)
+    {
+        activeViews.Add(view);
+    }
+
+    public void RemoveView(AView view)
+    {
+        activeViews.Remove(view);
+    }
+
+    CameraConfiguration InterpolateFixedView(List<AView> activeViews)
+    {
+        if (activeViews.Count == 0)
+        {
+            Debug.LogError("Ajoute des vues !");
+            return new CameraConfiguration(0f, 0f, 0f, Vector3.zero, 5f, 60f);
+        }
+
+
+        float yaw = 0f;
+        float pitch = 0f;
+        float roll = 0f;
+        Vector3 pivot = Vector3.zero;
+        float distance = 0f;
+        float fieldOfView = 0f;
+
+        float sumWeight = 0f;
+
+        foreach (AView view in activeViews)
+        {
+            yaw += view.weight * view.GetConfiguration().yaw;
+            pitch += view.weight * view.GetConfiguration().pitch;
+            roll += view.weight * view.GetConfiguration().roll;
+            pivot += view.weight * view.GetConfiguration().pivot;
+            distance += view.weight * view.GetConfiguration().distance;
+            fieldOfView += view.weight * view.GetConfiguration().fieldOfView;
+
+            sumWeight += view.weight;
+        }
+        if (sumWeight == 0)
+        {
+            Debug.LogError("Met des poids à tes vues");
+            float nbView = activeViews.Count;
+            return new CameraConfiguration(yaw/ nbView, pitch / nbView, roll / nbView, pivot / nbView, distance / nbView, fieldOfView/ nbView);
+        }
+        yaw /= sumWeight;
+        pitch /= sumWeight;
+        roll /= sumWeight;
+        pivot /= sumWeight;
+        distance /= sumWeight;
+        fieldOfView /= sumWeight;
+
+        return new CameraConfiguration(yaw, pitch, roll, pivot, distance, fieldOfView);
     }
 }
