@@ -4,9 +4,11 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
-    [SerializeField] float movementDuration = 5f;
-    public List<CameraConfiguration> listConfig;
+    [SerializeField] float speed = 3f;
+
     private Camera myCam;
+    private CameraConfiguration currentConfig;
+    private CameraConfiguration targetConfig;
 
     private List<AView> activeViews = new List<AView>();
 
@@ -32,46 +34,24 @@ public class CameraController : MonoBehaviour
     private void Update()
     {
         CameraConfiguration interpol = InterpolateFixedView(activeViews);
+        CameraConfiguration current = GetCurrentConfig();
 
         Quaternion orientation = Quaternion.Euler(interpol.pitch, interpol.yaw, interpol.roll);
-        myCam.transform.rotation = orientation;
         Vector3 offset = orientation * (Vector3.back * interpol.distance);
-        myCam.transform.position = interpol.pivot + offset;
-        myCam.fieldOfView = interpol.fieldOfView;
-    }
 
-    IEnumerator MoveConfig(List<CameraConfiguration> lConfig)
-    {
-        if (lConfig.Count == 0)
+        float s = speed * Time.deltaTime;
+
+        if (s < 1f)
         {
-            yield return null;
-        }
-        else if (lConfig.Count == 1)
-        {
-            Quaternion orientation = Quaternion.Euler(lConfig[0].pitch, lConfig[0].yaw, lConfig[0].roll);
-            myCam.transform.rotation = orientation;
-            Vector3 offset = orientation * (Vector3.back * lConfig[0].distance);
-            transform.position = lConfig[0].pivot + offset;
-            myCam.fieldOfView = lConfig[0].fieldOfView;
+            myCam.transform.rotation = Quaternion.Lerp(current.GetRotation(), interpol.GetRotation(), s);            
+            myCam.transform.position = Vector3.Lerp(current.GetPosition(), interpol.GetPosition(), s);
+            myCam.fieldOfView = Mathf.Lerp(current.fieldOfView, interpol.fieldOfView, s);
         }
         else
         {
-            float timer = 0f;
-            while (timer < movementDuration)
-            {
-                timer += Time.deltaTime;
-
-                CameraConfiguration bla = CameraConfiguration.ListInterpolation(timer / movementDuration, lConfig);
-
-                Quaternion orientation = Quaternion.Euler(bla.pitch, bla.yaw, bla.roll);
-                myCam.transform.rotation = orientation;
-
-                Vector3 offset = orientation * Vector3.back * bla.distance;
-                myCam.transform.position = bla.pivot + offset;
-                myCam.fieldOfView = bla.fieldOfView;
-
-                yield return null;
-            }
+            myCam.transform.rotation = orientation;
+            myCam.transform.position = interpol.pivot + offset;
+            myCam.fieldOfView = interpol.fieldOfView;
         }
     }
 
@@ -85,6 +65,17 @@ public class CameraController : MonoBehaviour
         activeViews.Remove(view);
     }
 
+    CameraConfiguration GetCurrentConfig()
+    {
+        float yaw = myCam.transform.rotation.eulerAngles.y;
+        float pitch = myCam.transform.rotation.eulerAngles.x;
+        float roll = myCam.transform.rotation.eulerAngles.z;
+        Vector3 pivot = myCam.transform.position;
+        float distance = 0f;
+        float fieldOfView = myCam.fieldOfView;
+
+        return new CameraConfiguration(yaw, pitch, roll, pivot, distance, fieldOfView);
+    }
     CameraConfiguration InterpolateFixedView(List<AView> activeViews)
     {
         if (activeViews.Count == 0)
@@ -128,5 +119,49 @@ public class CameraController : MonoBehaviour
         fieldOfView /= sumWeight;
 
         return new CameraConfiguration(yaw, pitch, roll, pivot, distance, fieldOfView);
+    }
+
+
+
+
+
+
+    // My test
+    [SerializeField] float movementDuration = 5f;
+    public List<CameraConfiguration> listConfig;
+
+    IEnumerator MoveConfig(List<CameraConfiguration> lConfig)
+    {
+        if (lConfig.Count == 0)
+        {
+            yield return null;
+        }
+        else if (lConfig.Count == 1)
+        {
+            Quaternion orientation = Quaternion.Euler(lConfig[0].pitch, lConfig[0].yaw, lConfig[0].roll);
+            myCam.transform.rotation = orientation;
+            Vector3 offset = orientation * (Vector3.back * lConfig[0].distance);
+            transform.position = lConfig[0].pivot + offset;
+            myCam.fieldOfView = lConfig[0].fieldOfView;
+        }
+        else
+        {
+            float timer = 0f;
+            while (timer < movementDuration)
+            {
+                timer += Time.deltaTime;
+
+                CameraConfiguration bla = CameraConfiguration.ListInterpolation(timer / movementDuration, lConfig);
+
+                Quaternion orientation = Quaternion.Euler(bla.pitch, bla.yaw, bla.roll);
+                myCam.transform.rotation = orientation;
+
+                Vector3 offset = orientation * Vector3.back * bla.distance;
+                myCam.transform.position = bla.pivot + offset;
+                myCam.fieldOfView = bla.fieldOfView;
+
+                yield return null;
+            }
+        }
     }
 }
