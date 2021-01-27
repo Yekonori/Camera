@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class Rail : MonoBehaviour
 {
-    [SerializeField] bool isLoop = false;
-    [SerializeField] List<Transform> nodes;// = new List<Transform>();
+    public bool isLoop = false;
+    public List<Transform> nodes;// = new List<Transform>();
     private float length = 0f;
     private List<float> nodesDistance = new List<float>();
 
@@ -85,5 +85,10 @@ public class Rail : MonoBehaviour
             }
         }
         return Vector3.Lerp(nodes[nodes.Count - 1].position, nodes[0].position, distance / nodesDistance[nodesDistance.Count - 1]);
+    }
+
+    public List<float> GetNodesDistance()
+    {
+        return nodesDistance;
     }
 }

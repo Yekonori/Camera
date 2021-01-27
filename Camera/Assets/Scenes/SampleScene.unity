@@ -291,7 +291,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a9d8dee0a14fefb4490885fd1fea0104, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  weight: 0
+  weight: 1
   isActiveOnStart: 1
   roll: 0
   distance: 0
@@ -299,6 +299,7 @@ MonoBehaviour:
   target: {fileID: 949879104}
   rail: {fileID: 1207284768}
   speed: 10
+  isAuto: 1
 --- !u!4 &196875590
 Transform:
   m_ObjectHideFlags: 0
@@ -307,7 +308,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 196875588}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.75903606, y: 1.0105877, z: 8.413258}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -563,7 +564,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 923816235}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -2.85, y: 0, z: -2.72}
+  m_LocalPosition: {x: -0.74, y: 0, z: -1.04}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1207284769}
