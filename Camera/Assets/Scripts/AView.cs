@@ -22,7 +22,7 @@ public abstract class AView : MonoBehaviour
         }
     }
 
-    public void OnDrawGizmos()
+    public virtual void OnDrawGizmos()
     {
         CameraConfiguration test = GetConfiguration();
         if (test != null && isActiveOnStart)

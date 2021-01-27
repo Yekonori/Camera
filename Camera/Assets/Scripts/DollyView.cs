@@ -21,6 +21,8 @@ public class DollyView : AView
 
     private float dist = 0f;
 
+    private Vector3 debugClosestPoint;
+
     private void Update()
     {
         if (!isAuto)
@@ -51,6 +53,7 @@ public class DollyView : AView
                 }
             }
 
+
             float d1 = Mathf.Infinity;
             Vector3 pos1 = Vector3.zero;
             float d2 = Mathf.Infinity;
@@ -58,10 +61,7 @@ public class DollyView : AView
 
             Vector3 toPrevious = Vector3.zero;
             Vector3 toNext = Vector3.zero;
-            // si closestNode = node[0] || node[last]
-            // => tester projection sur node0 - nodeLast et node0-node1 || nodeLast-nodeLast-1
-            // sinon tester sur nodei-1-nodei et nodei nodei+1
-            // si is loop => ne pas prendre en compte node0nodelast
+
             if (closestNodeNumber == 0)
             {
                 toPrevious = rail.nodes[rail.nodes.Count - 1].position - rail.nodes[closestNodeNumber].position;
@@ -78,10 +78,10 @@ public class DollyView : AView
                 toNext = rail.nodes[closestNodeNumber + 1].position - rail.nodes[closestNodeNumber].position;
             }
 
-            pos1 = closestNode.position + Mathf.Clamp(Vector3.Dot(target.position - closestNode.position, toPrevious), 0f, toPrevious.magnitude) * toPrevious.normalized;
+            pos1 = closestNode.position + Mathf.Clamp(Vector3.Dot(target.position - closestNode.position, toPrevious.normalized), 0f, toPrevious.magnitude) * toPrevious.normalized;
             d1 = (target.position - pos1).sqrMagnitude;
 
-            pos2 = closestNode.position + Mathf.Clamp(Vector3.Dot(target.position - closestNode.position, toNext), 0f, toNext.magnitude) * toNext.normalized;
+            pos2 = closestNode.position + Mathf.Clamp(Vector3.Dot(target.position - closestNode.position, toNext.normalized), 0f, toNext.magnitude) * toNext.normalized;
             d2 = (target.position - pos2).sqrMagnitude;
 
             if (!rail.isLoop)
