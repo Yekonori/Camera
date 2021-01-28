@@ -22,14 +22,41 @@ public class CameraConfiguration
         fieldOfView = _fieldOfView;
     }
 
+    public Quaternion GetRotation()
+    {
+        return Quaternion.Euler(pitch, yaw, roll);
+    }
+
+    public Vector3 GetPosition()
+    {
+        Vector3 offset = distance * Vector3.back;
+        Vector3 position = pivot + offset;
+
+        return position;
+    }
+
+    public void DrawGizmos(Color color)
+    {
+        Gizmos.color = color;
+        Gizmos.DrawSphere(pivot, 0.25f);
+        Vector3 position = GetPosition();
+        Gizmos.DrawLine(pivot, position);
+        Gizmos.matrix = Matrix4x4.TRS(position, GetRotation(), Vector3.one);
+        Gizmos.DrawFrustum(Vector3.zero, fieldOfView, 0.5f, 0f, Camera.main.aspect);
+        Gizmos.matrix = Matrix4x4.identity;
+    }
+
+
+
+    // PARTIE TEST
     public static CameraConfiguration Scalaire(float a, CameraConfiguration config)
     {
-       float yaw = a * config.yaw;
-       float pitch = a * config.pitch;
-       float roll = a * config.roll;
-       Vector3 pivot = a * config.pivot;
-       float distance = a * config.distance;
-       float fieldOfView = a * config.fieldOfView;
+        float yaw = a * config.yaw;
+        float pitch = a * config.pitch;
+        float roll = a * config.roll;
+        Vector3 pivot = a * config.pivot;
+        float distance = a * config.distance;
+        float fieldOfView = a * config.fieldOfView;
 
         CameraConfiguration toReturn = new CameraConfiguration(yaw, pitch, roll, pivot, distance, fieldOfView);
         return toReturn;
@@ -65,32 +92,7 @@ public class CameraConfiguration
             List<CameraConfiguration> list2 = new List<CameraConfiguration>(list);
             list1.RemoveAt(list.Count - 1);
             list2.RemoveAt(0);
-            return SumConfig(Scalaire(1 - t, ListInterpolation(t, list1)), Scalaire(t, ListInterpolation(t, list2)));  
+            return SumConfig(Scalaire(1 - t, ListInterpolation(t, list1)), Scalaire(t, ListInterpolation(t, list2)));
         }
     }
-
-    public Quaternion GetRotation()
-    {
-        return Quaternion.Euler(pitch, yaw, roll);
-    }
-
-    public Vector3 GetPosition()
-    {
-        Vector3 offset = distance * Vector3.back;
-        Vector3 position = pivot + offset;
-
-        return position;
-    }
-
-    public void DrawGizmos(Color color)
-    {
-        Gizmos.color = color;
-        Gizmos.DrawSphere(pivot, 0.25f);
-        Vector3 position = GetPosition();
-        Gizmos.DrawLine(pivot, position);
-        Gizmos.matrix = Matrix4x4.TRS(position, GetRotation(), Vector3.one);
-        Gizmos.DrawFrustum(Vector3.zero, fieldOfView, 0.5f, 0f, Camera.main.aspect);
-        Gizmos.matrix = Matrix4x4.identity;
-    }
-
 }

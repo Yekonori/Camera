@@ -93,9 +93,13 @@ public class CameraController : MonoBehaviour
 
         float sumWeight = 0f;
 
+        Vector2 sum = Vector2.zero;
+
         foreach (AView view in activeViews)
         {
-            yaw += view.weight * view.GetConfiguration().yaw;
+            //yaw += view.weight * view.GetConfiguration().yaw;
+            sum += new Vector2(Mathf.Cos(view.GetConfiguration().yaw * Mathf.Deg2Rad), Mathf.Sin(view.GetConfiguration().yaw * Mathf.Deg2Rad)) * view.weight;
+
             pitch += view.weight * view.GetConfiguration().pitch;
             roll += view.weight * view.GetConfiguration().roll;
             pivot += view.weight * view.GetConfiguration().pivot;
@@ -107,19 +111,26 @@ public class CameraController : MonoBehaviour
         if (sumWeight == 0)
         {
             Debug.LogError("Met des poids à tes vues");
+            sum = Vector2.zero;
+
             foreach (AView view in activeViews)
             {
-                yaw += view.GetConfiguration().yaw;
+                //yaw += view.GetConfiguration().yaw;
+                sum += new Vector2(Mathf.Cos(view.GetConfiguration().yaw * Mathf.Deg2Rad), Mathf.Sin(view.GetConfiguration().yaw * Mathf.Deg2Rad)) * 1 / activeViews.Count;
+
                 pitch += view.GetConfiguration().pitch;
                 roll += view.GetConfiguration().roll;
                 pivot += view.GetConfiguration().pivot;
                 distance += view.GetConfiguration().distance;
                 fieldOfView += view.GetConfiguration().fieldOfView;
             }
+            yaw = Vector2.SignedAngle(Vector2.right, sum);
             float nbView = activeViews.Count;
-            return new CameraConfiguration(yaw/ nbView, pitch / nbView, roll / nbView, pivot / nbView, distance / nbView, fieldOfView/ nbView);
+            return new CameraConfiguration(yaw, pitch / nbView, roll / nbView, pivot / nbView, distance / nbView, fieldOfView/ nbView);
         }
-        yaw /= sumWeight;
+        //yaw /= sumWeight;
+        yaw = Vector2.SignedAngle(Vector2.right, sum);
+
         pitch /= sumWeight;
         roll /= sumWeight;
         pivot /= sumWeight;
@@ -129,7 +140,16 @@ public class CameraController : MonoBehaviour
         return new CameraConfiguration(yaw, pitch, roll, pivot, distance, fieldOfView);
     }
 
-
+    public float ComputeAverageYaw()
+    {
+        Vector2 sum = Vector2.zero;
+        foreach (AView view in activeViews)
+        {
+            CameraConfiguration config = view.GetConfiguration();
+            sum += new Vector2(Mathf.Cos(config.yaw * Mathf.Deg2Rad), Mathf.Sin(config.yaw * Mathf.Deg2Rad)) * view.weight;
+        }
+        return Vector2.SignedAngle(Vector2.right, sum);
+    }
 
 
 
