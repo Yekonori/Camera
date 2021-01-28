@@ -18,10 +18,6 @@ public class FixedFollowView : AView
     private float yawCentral = 0f;
     private float pitchCentral = 0f;
 
-    private new void Start()
-    {
-        base.Init();
-    }
 
     private void Update()
     {

@@ -19,13 +19,11 @@ public class FreeFollowView : AView
     [SerializeField, Range(0f, 1f)] float curvePosition;
     [SerializeField] float curveSpeed;
 
-    private float distance = 0f;
-
     private Matrix4x4 curveToWorldMatrix = Matrix4x4.TRS(Vector3.zero, Quaternion.identity, Vector3.one);
 
-    private new void Start()
+    private void Start()
     {
-        base.Init();
+        //base.Init();
         if (!(pitch.Count == roll.Count && pitch.Count == fov.Count))
             Debug.LogError("Pitch, Roll, et Fov n'ont pas le même nombre d'élément !");
     }
