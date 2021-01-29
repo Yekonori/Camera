@@ -11,6 +11,7 @@ public class CameraController : MonoBehaviour
     private CameraConfiguration targetConfig;
 
     private List<AView> activeViews = new List<AView>();
+    private bool isCutRequested = false;
 
     public static CameraController Instance;
     private void Awake()
@@ -41,17 +42,28 @@ public class CameraController : MonoBehaviour
 
         float s = speed * Time.deltaTime;
 
-        if (s < 1f)
-        {
-            myCam.transform.rotation = Quaternion.Lerp(currentConfig.GetRotation(), targetConfig.GetRotation(), s);            
-            myCam.transform.position = Vector3.Lerp(currentConfig.GetPosition(), targetConfig.GetPosition(), s);
-            myCam.fieldOfView = Mathf.Lerp(currentConfig.fieldOfView, targetConfig.fieldOfView, s);
-        }
-        else
+        if (isCutRequested)
         {
             myCam.transform.rotation = orientation;
             myCam.transform.position = targetConfig.pivot + offset;
             myCam.fieldOfView = targetConfig.fieldOfView;
+
+            isCutRequested = false;
+        }
+        else
+        {
+            if (s < 1f)
+            {
+                myCam.transform.rotation = Quaternion.Lerp(currentConfig.GetRotation(), targetConfig.GetRotation(), s);
+                myCam.transform.position = Vector3.Lerp(currentConfig.GetPosition(), targetConfig.GetPosition(), s);
+                myCam.fieldOfView = Mathf.Lerp(currentConfig.fieldOfView, targetConfig.fieldOfView, s);
+            }
+            else
+            {
+                myCam.transform.rotation = orientation;
+                myCam.transform.position = targetConfig.pivot + offset;
+                myCam.fieldOfView = targetConfig.fieldOfView;
+            }
         }
     }
 
@@ -151,6 +163,10 @@ public class CameraController : MonoBehaviour
         return Vector2.SignedAngle(Vector2.right, sum);
     }
 
+    public void Cut()
+    {
+        isCutRequested = true;
+    }
 
 
 

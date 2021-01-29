@@ -8,7 +8,6 @@ public class TriggeredViewVolume : AViewVolume
     {
         if (other.CompareTag("Player"))
         {
-            //isTriggered = true;
             SetActive(true);
         }
     }
@@ -17,7 +16,6 @@ public class TriggeredViewVolume : AViewVolume
     {
         if (other.CompareTag("Player"))
         {
-            //isTriggered = false;
             SetActive(false);
         }
     }

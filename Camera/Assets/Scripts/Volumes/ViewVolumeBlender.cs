@@ -25,10 +25,10 @@ public class ViewVolumeBlender : MonoBehaviour
 
     private void Update()
     {
-        Test();
+        Blend();
     }
 
-    void Test()
+    void Blend()
     {
         activeViewVolumes = SortMyList(activeViewVolumes);
 
@@ -77,6 +77,8 @@ public class ViewVolumeBlender : MonoBehaviour
             volumesPerViews[volume.view] = new List<AViewVolume>();
         }
         volumesPerViews[volume.view].Add(volume);
+
+        Blend();
     }
 
     public void RemoveVolume(AViewVolume volume)
