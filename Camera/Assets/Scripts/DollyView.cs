@@ -42,6 +42,7 @@ public class DollyView : AView
             Transform closestNode = rail.nodes[0];
             float minDistance = Mathf.Infinity;
             int closestNodeNumber = 0;
+            
             for (int i = 0; i < rail.nodes.Count; ++i)
             {
                 float currentDistance = (target.position - rail.nodes[i].position).sqrMagnitude;
@@ -52,7 +53,6 @@ public class DollyView : AView
                     closestNodeNumber = i;
                 }
             }
-
 
             float d1 = Mathf.Infinity;
             Vector3 pos1 = Vector3.zero;
@@ -93,6 +93,17 @@ public class DollyView : AView
                 else if (closestNodeNumber == rail.nodes.Count - 1)
                 {
                     railPosition = pos1;
+                }
+                else
+                {
+                    if (d1 < d2)
+                    {
+                        railPosition = pos1;
+                    }
+                    else
+                    {
+                        railPosition = pos2;
+                    }
                 }
             }
             else
