@@ -5,13 +5,15 @@ using UnityEngine;
 public abstract class AView : MonoBehaviour
 {
     [Min(0f)] public float weight;
+    protected bool isActive = false;
 
     public abstract CameraConfiguration GetConfiguration();
 
-    public void SetActive(bool isActive)
+    public void SetActive(bool _isActive)
     {
         //SetActive(isActive);
-        if (isActive)
+        isActive = _isActive;
+        if (_isActive)
         {
             CameraController.Instance.AddView(this);
         }

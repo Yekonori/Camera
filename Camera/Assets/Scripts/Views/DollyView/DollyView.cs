@@ -27,14 +27,19 @@ public class DollyView : AView
     {
         if (!isAuto)
         {
-            if (Input.GetKey(KeyCode.RightArrow))
+            if (isActive)
             {
-                dist += speed * Time.deltaTime;
+                float inputMouseWheel = Input.GetAxis("Mouse ScrollWheel");
+                dist += speed * Time.deltaTime * inputMouseWheel;
             }
-            else if (Input.GetKey(KeyCode.LeftArrow))
-            {
-                dist -= speed * Time.deltaTime;
-            }
+            //if (Input.GetKey(KeyCode.RightArrow))
+            //{
+            //    dist += speed * Time.deltaTime;
+            //}
+            //else if (Input.GetKey(KeyCode.LeftArrow))
+            //{
+            //    dist -= speed * Time.deltaTime;
+            //}
             railPosition = rail.GetPosition(dist);
         }
         else
